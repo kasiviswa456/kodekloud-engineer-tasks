@@ -3,13 +3,13 @@ On all App servers in Stratos Datacenter change the default runlevel so that the
 A: 
 1. systemctl get-default
 Output: multi-user.target
-2. systemctl set-default multi-user.target
+2. systemctl set-default graphical.target
 Output: 
 Removed symlink /etc/systemd/system/default.target.
 Created symlink from /etc/systemd/system/default.target to /usr/lib/systemd/system/multi-user.target.
-3. systemctl start multi-user.target
-4. systemctl enable multi-user.target
-5. systemctl status multi-user.target
+3. systemctl start graphical.target
+4. systemctl enable graphical.target
+5. systemctl status graphical.target
 Output: 
 ● multi-user.target - Multi-User System
    Loaded: loaded (/usr/lib/systemd/system/multi-user.target; enabled; vendor preset: disabled)
