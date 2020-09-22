@@ -1,0 +1,25 @@
+New tools have been installed on the app server in Stratos Datacenter. Some of these tools can only be managed from the graphical user interface. Therefore, there are requirements for these app servers.
+On all App servers in Stratos Datacenter change the default runlevel so that they can boot in GUI (graphical user interface) by default.
+A: 
+1. systemctl get-default
+Output: multi-user.target
+2. systemctl set-default multi-user.target
+Output: 
+Removed symlink /etc/systemd/system/default.target.
+Created symlink from /etc/systemd/system/default.target to /usr/lib/systemd/system/multi-user.target.
+3. systemctl start multi-user.target
+4. systemctl enable multi-user.target
+5. systemctl status multi-user.target
+Output: 
+● multi-user.target - Multi-User System
+   Loaded: loaded (/usr/lib/systemd/system/multi-user.target; enabled; vendor preset: disabled)
+   Active: active since Tue 2020-09-22 18:29:40 UTC; 13min ago
+     Docs: man:systemd.special(7)
+Sep 22 18:29:40 stapp01 systemd[1]: Job multi-user.target/start finished, result=done
+Sep 22 18:29:40 stapp01 systemd[1]: Reached target Multi-User System.
+Sep 22 18:42:22 stapp01 systemd[1]: Trying to enqueue job multi-user.target/start/replace
+Sep 22 18:42:22 stapp01 systemd[1]: Installed new job multi-user.target/start as 112
+Sep 22 18:42:22 stapp01 systemd[1]: Enqueued job multi-user.target/start as 112
+Sep 22 18:42:22 stapp01 systemd[1]: Job multi-user.target/start finished, result=done
+
+Run the above commands all appservers. 
