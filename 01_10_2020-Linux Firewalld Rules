@@ -1,0 +1,20 @@
+The Nautilus system admins team recently deployed a web UI application for their backup utility running on the Nautilus backup server in Stratos Datacenter. The application is running on port 3004. They have firewalld installed on that server. The requirements that have come up include the following:
+
+Open all incoming connection on 3004/tcp port. Zone should be public.
+
+
+Soultion:
+
+Login to the below command
+
+ssh clint@172.16.238.16
+
+Password: H@wk3y3	
+
+firewall-cmd --permanent --zone=public --add-port=3004/tcp
+
+ firewall-cmd --reload
+ 
+ systemctl restart firewalld
+ 
+ firewall-cmd --zone=public --list-all
