@@ -1,0 +1,29 @@
+The system admins team of xFusionCorp Industries has set up some scripts on jump host that run on regular intervals and perform operations on all app servers in Stratos Datacenter. To make these scripts work properly we need to make sure thor user on jump host has password-less SSH access to all app servers through their respective sudo users. Based on the requirements, perform the following:
+Set up a password-less authentication for user thor on jump host to all app servers through their respective sudo users.
+
+Soultion:
+
+Remember: You need to do all this steps in thor host
+
+ssh-keygen -t rsa
+ls ~/.ssh/id_*
+
+ssh-copy-id tony@172.16.238.10
+Password: Ir0nM@n
+ssh-copy-id steve@172.16.238.11
+Password: Am3ric@
+ssh-copy-id banner@172.16.238.12
+Password: BigGr33n
+
+
+
+cat ~/.ssh/id_rsa.pub | ssh tony@172.16.238.10 "mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+
+cat ~/.ssh/id_rsa.pub | ssh steve@172.16.238.11 "mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+
+cat ~/.ssh/id_rsa.pub | ssh banner@172.16.238.12 "mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+
+
+ssh tony@172.16.238.10
+ssh steve@172.16.238.11
+ssh banner@172.16.238.12
