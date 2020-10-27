@@ -1,0 +1,56 @@
+Nautilus system admin's team is planning to deploy a front end application for their backup utility on Nautilus Backup Server, so that they can manage the backups of different websites from a graphical user interface. They have shared requirements to set up the same; please accomplish the tasks as per detail given below:
+
+a. Install Apache Server on Nautilus Backup Server and configure it to use 8086 port (do not bind it to 127.0.0.1 only, keep it default i.e let Apache listen on server's IP, hostname, localhost, 127.0.0.1 etc).
+
+b. Install Nginx webserver on Nautilus Backup Server and configure it to use 8092.
+
+c. Configure Nginx as a reverse proxy server for Apache.
+
+d. There is a sample index file /home/index.html on Jump Host, copy that file to Apache's document root.
+
+e. Make sure to start Apache and Nginx services.
+
+f. You can test final changes using curl command, e.g curl http://<backup server IP or Hostname>:8092.
+
+Solution:
+
+Then install httpd annd nginx by running following commands
+
+yum install httpd
+yum install epel-release
+yum install nginx
+ 
+Now ,edit the apache config file and Change port and ServerName according to question
+ 
+Type vi  /etc/httpd/conf/httpd.conf
+
+Listen 8086
+
+Go to ServerName and uncomment by removing # and write 172.16.238.16:6000
+
+ServerName 172.16.238.16:8086
+
+Now save the config and restart httpd
+
+Go to nginx config by typing
+
+vi /etc/nginx/nginx.conf
+ 
+Edit the config as follows. For reverse proxy add the proxy_pass in location tab.
+
+    server
+      {   
+        listen       8092 default_server;
+        listen       [::]:80 default_server;
+        server_name  172.16.238.16;
+        
+        
+        proxy_pass http://172.16.238.16:8086;
+        
+     scp /home/index.html clint@172.16.238.16:/tmp
+     login to the backup server
+     cp /tmp/index.html /var/httpd/html
+     
+     
+        
+     
