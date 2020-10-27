@@ -49,7 +49,7 @@ Edit the config as follows. For reverse proxy add the proxy_pass in location tab
         
      scp /home/index.html clint@172.16.238.16:/tmp
      login to the backup server
-     cp /tmp/index.html /var/httpd/html
+     cp /tmp/index.html /var/www/html
      
      
         
