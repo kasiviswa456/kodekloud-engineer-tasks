@@ -1,0 +1,48 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+Solution:
+
+in app servers
+cat /etc/httpd/conf/httpd.conf| grep Listen --> to check httpd port to configure in LBR
+systemctl enable httpd && service httpd start && service httpd status
+
+
+LBR server
+yum -y install haproxy
+cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.bkp
+cat /etc/haproxy/haproxy.cfg | grep haproxy/stat
+vi /etc/haproxy/haproxy.cfg
+
+frontend  main *:80
+        acl url_static       path_beg       -i /static /images /javascript /stylesheets
+        acl url_static       path_end       -i .jpg .gif .png .css .js
+
+        use_backend static          if url_static
+        default_backend             app
+
+backend app
+        balance roundrobin
+        server stapp01 172.16.238.10:8086 check
+        server stapp02 172.16.238.11:8086 check
+        server stapp03 172.16.238.12:8086 check
+
+To validate
+haproxy -f /etc/haproxy/haproxy.cfg
+systemctl enable haproxy && service haproxy start && service haproxy status
+
+to Validate LBR and all app servers
+curl 172.16.238.10:8086
+curl 172.16.238.11:8086
+curl 172.16.238.12:8086
+curl 172.16.238.14:80
