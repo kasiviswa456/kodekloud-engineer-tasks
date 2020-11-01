@@ -1,0 +1,64 @@
+To secure our Nautilus infrastructure in Stratos Datacenter we have decided to install and configure firewalld on all app servers. We have Apache and Nginx services running on these apps. Nginx is running as a reverse proxy server for Apache. We might have more robust firewall settings in the future, but for now we have decided to go with the given requirements listed below:
+
+a. Allow all incoming connections on Nginx port.
+
+b. Allow incoming connections from LB host only on Apache port and block for all others.
+
+c. All rules must be permanent.
+
+d. Zone should be public.
+
+e. If Apache or Nginx services aren't running already, please make sure to start them.
+
+Solution:
+
+I followed the below steps referring to your earlier post.
+
+#To check the status of nginx and httpd
+systemctl status nginx && systemctl status httpd
+
+#To check the port number for nginx and httpd
+grep -i Listen /etc/httpd/conf/ht* /etc/nginx/nginx.conf
+
+#install firewall & start and check status
+yum install firewalld -y
+systemctl start firewalld && systemctl enable firewalld && systemctl status firewalld
+
+find nginx port 8096
+yum install net-tools
+netstat -tulpn | grep LISTEN
+systemctl restart dbus
+
+systemctl start firewalld && systemctl enable firewalld && systemctl status firewalld
+
+#adding firewall rules to allow and block
+
+firewall-cmd --zone=public --add-port=8097/tcp(nginx port) --permanent
+firewall-cmd --permanent --zone=public --add-service={http,https}
+firewall-cmd --permanent --zone=public --add-rich-rule='rule family=ipv4 source address=172.16.238.14 port port=8082(apache port) protocol=tcp accept'
+firewall-cmd --permanent --zone=public --change-interface=wan
+
+firewall-cmd --reload
+firewall-cmd --get-active-zones
+systemctl restart firewalld && systemctl status firewalld
+firewall-cmd --zone=public --list-ports && firewall-cmd --zone=public --list-all && firewall-cmd --list-all
+
+Also, modified the nginx config file
+
+server {
+server_name 172.16.238.10;
+root /usr/share/nginx/html;
+}
+
+proxy_pass http://172.16.238.10:8082/;
+
+systemctl restart nginx
+systemctl status httpd
+
+telnet stapp01 8097
+
+telnet stapp02 8097
+
+telnet stapp03 8097
+
+firewall-cmd --permanent --zone=public --add-rich-rule='rule family=ipv4 source address=172.16.238.14 port port=5003 protocol=tcp accept'
