@@ -8,19 +8,23 @@ Make sure the rules remain, even after system reboot.
 
 Solution:
 
-sudo  yum install iptables-services -y
+sudo yum install iptables-services -y
 
 systemctl start iptables && systemctl enable iptables && systemctl status iptables
 
-iptables -A INPUT -p tcp --destination-port 8082 -s 172.16.238.14 -j ACCEPT
-iptables -A INPUT -p tcp --destination-port 8082 -j DROP
+iptables -I INPUT -p tcp --destination-port 8081 -j DROP
+iptables -I INPUT -p tcp --destination-port 8081 -s 172.16.238.14 -j ACCEPT
 
-sudo iptables-save
+service iptables save
+
+iptables -L -n
+
+Make sure you add the iptables command without -A option. Append will add your rules at the bottom of the tables which will not have any affect because one above this rule is block all connections. Thats why your LB is still not reachable.
+
+Just add -I (Insert option which will add at the top), you can verify the rules order by iptables -L Also make sure to test it from LB host and Jump host to validate the answer.
+
+Sathish is correct. Try to add these lines one by one "iptables -I INPUT -p tcp --destination-port 3001 -j DROP" and then add these line "iptables -I INPUT -p tcp --destination-port 8082 -s 172.16.238.14 -j ACCEPT" and to save rules permanently type "service iptables save"
 
 curl stapp01:8082
 talenet stapp01 5000
 
-
-sudo iptables -I INPUT -p tcp --destination-port 8082 -j DROP 
-sudo iptables -A public -s 172.16.238.14 -p tcp --dport 8082 -j ACCEPT
-sudo iptables -A public -p tcp --destination-port 8082 -s 172.16.238.14 -j ACCEPT
