@@ -1,0 +1,26 @@
+We have one of our websites up and running on our Nautilus infrastructure in Stratos DC. Our security team has raised a concern that right now Apache’s port i.e 5000 is open for all since there is no firewall installed on these hosts. So we have decided to add some security layer for these hosts and after discussions and recommendations we have come up with the following requirements:
+
+Install iptables and all its dependencies on each app host.
+
+Block incoming port 5000 on all apps for everyone except for LBR host.
+
+Make sure the rules remain, even after system reboot.
+
+Solution:
+
+sudo  yum install iptables-services -y
+
+systemctl start iptables && systemctl enable iptables && systemctl status iptables
+
+iptables -A INPUT -p tcp --destination-port 8082 -s 172.16.238.14 -j ACCEPT
+iptables -A INPUT -p tcp --destination-port 8082 -j DROP
+
+sudo iptables-save
+
+curl stapp01:8082
+talenet stapp01 5000
+
+
+sudo iptables -I INPUT -p tcp --destination-port 8082 -j DROP 
+sudo iptables -A public -s 172.16.238.14 -p tcp --dport 8082 -j ACCEPT
+sudo iptables -A public -p tcp --destination-port 8082 -s 172.16.238.14 -j ACCEPT
