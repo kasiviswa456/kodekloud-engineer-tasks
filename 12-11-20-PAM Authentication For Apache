@@ -1,0 +1,49 @@
+
+
+
+
+
+Solution:
+
+N.B : Do these task in all app servers (stapp01, stapp02, stapp03)
+
+At first install pwauth
+
+yum --enablerepo=epel -y install mod_authnz_external pwauth 
+
+Then Edit the config
+
+vi /etc/httpd/conf.d/authnz_external.conf
+
+Add these lines
+
+<Directory /var/www/html/protected>
+AuthType Basic
+AuthName "PAM Authentication"
+AuthBasicProvider external
+AuthExternal pwauth
+require valid-user
+
+</Directory>
+
+Then create a protected directory
+
+mkdir -p /var/www/html/protected
+
+Open the index.html file and you will found protected directory message
+
+vi /var/www/html/protected/index.html
+
+Restart and check status of httpd
+
+systemctl restart httpd
+
+systemctl status httpd
+
+Finally check  from curl command with mentioned username and password
+
+curl -u anita:BruCStnMT5 http://localhost:8080/protected/
+
+You can also click the + and Select Port on Host 80 link and then enter 80 port. Then add /protected with that link. Authentication window will be opened
+
+Do these same task in all app servers (stapp01, stapp02, stapp03)
