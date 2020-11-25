@@ -1,0 +1,52 @@
+The Nautilus production support team was trying to fix issues with their storage server. The storage server has a shared directory /nfsdata, which is mounted on all app servers at location /var/www/html so that whatever data they store on storage server under /nfsdata can be shared among all app servers. Somehow NFS server is broken and having some issues.
+
+
+Identify the root cause of the issue and fix it to make sure sharing works fine among all app servers and storage server.
+
+Solution:
+
+systemctl enable nfs-server
+chkconfig nfs-server on
+
+systemctl enable rpcbind
+chkconfig rpcbind on
+
+
+systemctl start nfs-server
+systemctl status nfs-server
+
+systemctl start rpcbind
+systemctl status rpcbind
+
+vi /etc/exports
+
+exportfs -a
+
+showmount -e (Ip of the server)
+
+/nfsdata 172.16.238.10(rw,sync,no_root_squash)
+/nfsdata 172.16.238.11(rw,sync,no_root_squash)
+/nfsdata 172.16.238.12(rw,sync,no_root_squash)
+
+Do the below steps on all the app servers
+
+systemctl enable nfs-server
+chkconfig nfs-server on
+
+systemctl enable rpcbind
+chkconfig rpcbind on
+
+
+systemctl start nfs-server
+systemctl status nfs-server
+
+systemctl start rpcbind
+systemctl status rpcbind
+
+mount -t nfs ststor01:/nfsdata /var/www/html
+
+df -h 
+
+mount | grep nfs 
+
+https://www.shawonruet.com/2020/08/nfs-troubleshooting-kodekloud.html
